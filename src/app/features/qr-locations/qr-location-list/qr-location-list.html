@@ -1,0 +1,237 @@
+<div class="container">
+
+  <app-table-toolbar
+  [title]="titleKey()"
+  [showImportButton]="true"
+  [showExportButton]="true"
+  (openImport)="isExcelModalOpen.set(true)"
+  (refresh)="loadData()"
+  (exportDataListExcel)="downloadExportDataListExcel()"
+  [addButtonRouterLink]="['/qr-locations/form']"
+   >
+</app-table-toolbar>
+
+@if (isExcelModalOpen()) {
+  <app-excel-import-modal
+    [validateEndpoint]="'qr-locations/validate-excel'"
+    [commitEndpoint]="'qr-locations/bulk-create'"
+    [columns]="excelColumns"
+    (close)="isExcelModalOpen.set(false)"
+    (importCompleted)="loadData()"
+    (downloadTemplate)="downloadExportDataListExcel()"
+    (bulkCreate)="bulkCreate($event.data,$event.onSuccess, $event.onError, $event.onFinally)"
+    (exportSampleDataListExcel)="downloadExportSampleDataListExcel()"
+   >
+  </app-excel-import-modal>
+}
+  <div table-header-filter
+     [(searchQuery)]="filters().globalSearch"
+     (searchChange)="onInputChange()"
+     (clearFilters)="clearFilters()"
+     [hasSelection]="hasSelection()"
+     [selectedCount]="selectedIds().size"
+     (bulkDelete)="onBulkAction()"
+     (bulkSetActive)="onBulkSetActiveRole()"
+     (bulkSetPassive)="onBulkSetPassiveRole()"
+     (searchChange)="onInputChange()"
+     [showSelectAll]="true"
+     (toggleSelectAll)="toggleSelectAll()"
+     (toggleClearAll)="toggleClearAll()"
+     [showPassivedFilter]="true"
+     [(showPassived)]="showPassived"
+     (resetPage)= "resetPage()"
+  >
+
+  </div>
+
+  <app-table>
+      <thead>
+        <tr>
+          <th appTableCellHeaderActions ></th>
+
+          <th appTableCellHeader
+    field="revNum"
+    labelKey="Label.RevNum"
+    type="number"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().revNumCondition"
+    [(value)]="filters().revNumValue"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()"
+    width="150px">
+</th>
+
+<th appTableCellHeader
+    field="name"
+    labelKey="Label.QrLocationName"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().nameCondition"
+    [(value)]="filters().nameValue"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()">
+</th>
+
+<th appTableCellHeader
+    type="date"
+    field="startDate"
+    labelKey="Label.StartDate"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().startDateCondition"
+    [(value)]="filters().startDateValue"
+    [(value2)]="filters().startDateValue2"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()"></th>
+
+<th appTableCellHeader
+    type="date"
+    field="endDate"
+    labelKey="Label.EndDate"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().endDateCondition"
+    [(value)]="filters().endDateValue"
+    [(value2)]="filters().endDateValue2"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()"></th>
+
+<th appTableCellHeader
+    field="locationName"
+    labelKey="Label.LocationName"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().locationNameCondition"
+    [(value)]="filters().locationNameValue"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()">
+</th>
+
+<th appTableCellHeader
+    type="date"
+    field="createdDate"
+    labelKey="Label.CreatedDateTime"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().createdDateCondition"
+    [(value)]="filters().createdDateValue"
+    [(value2)]="filters().createdDateValue2"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()"></th>
+
+<th appTableCellHeader
+    field="CreatedByUser.FullName"
+    labelKey="Label.CreatedUserFullName"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().createdUserFullNameCondition"
+    [(value)]="filters().createdUserFullNameValue"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()">
+</th>
+<th appTableCellHeader
+    type="date"
+    field="modifiedDate"
+    labelKey="{{ showPassived() ? 'Label.PassivedDateTime':'Label.ModifiedDateTime' }}"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().modifiedDateCondition"
+    [(value)]="filters().modifiedDateValue"
+    [(value2)]="filters().modifiedDateValue2"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()"></th>
+<th appTableCellHeader
+    field="modifiedByUser.FullName"
+    labelKey="{{ showPassived() ? 'Label.PassivedUserFullName':'Label.ModifiedUserFullName' }}"
+    [currentSortField]="filters().sortField"
+    [currentSortOrder]="filters().sortOrder"
+    [(condition)]="filters().modifiedUserFullNameCondition"
+    [(value)]="filters().modifiedUserFullNameValue"
+    (sortChange)="toggleSort($event)"
+    (filterChange)="onInputChange()">
+</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+        @for (qrLocation of items(); track qrLocation.id) {
+          <tr>
+            <td class="table-actions">
+
+                <app-table-row-actions
+                  [id]="qrLocation.id ?? ''"
+                  [editRouterLink]="['/qr-locations/form', qrLocation.id]"
+                  [hasSelection]="hasSelection()"
+                  [isSelected]="selectedIds().has(qrLocation.id!)"
+                  (selected)="toggleSelection($event)"
+                  (deleted)="onDeleteQrLocation($event)"
+                  (setActive)="onSetActiveQrLocation($event)"
+                  [isPassivedRow]="showPassived()"
+                  [extraActions]="rowExtraActions(qrLocation)" >
+                </app-table-row-actions>
+
+            </td>
+            <td app-table-cell-text
+                 tooltipPosition="left"  [text]="qrLocation.revNum" ></td>
+            <td app-table-cell-text
+                 tooltipPosition="left"  [text]="qrLocation.name" ></td>
+            <td app-table-cell-datetime
+                 tooltipPosition="left" [value]="qrLocation.startDate " ></td>
+            <td app-table-cell-datetime
+                 tooltipPosition="left" [value]="qrLocation.endDate " ></td>
+            <td app-table-cell-text
+                 tooltipPosition="left"  [text]="qrLocation.locationName" ></td>
+            <td app-table-cell-datetime
+                 tooltipPosition="left" [value]="qrLocation.createdDateTime " ></td>
+            <td app-table-cell-text
+                 tooltipPosition="left" [text]="qrLocation.createdUserFullName" ></td>
+            <td app-table-cell-datetime
+                 tooltipPosition="left" [value]="qrLocation.modifiedDateTime " ></td>
+            <td app-table-cell-text
+                 tooltipPosition="left" [text]="qrLocation.modifiedUserFullName" ></td>
+          </tr>
+        }@empty {
+  <tr app-table-empty-state   >
+  </tr>
+}
+      </tbody>
+  </app-table>
+  <app-table-pagination
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [totalCount]="totalCount()"
+    [totalPages]="totalPages()"
+    [hasNext]="hasNext()"
+    [hasPrevious]="hasPrevious()"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)">
+  </app-table-pagination>
+
+</div>
+
+<app-modal
+  [isOpen]="isModalOpen()"
+  [title]="'Label.QrLocationQrCode' | translate"
+  (closeModal)="closeModal()">
+
+  <div id="printable-qr">
+    <qrcode
+      [qrdata]="qrCodeUrl()"
+      [width]="256"
+      [errorCorrectionLevel]="'M'"
+      [elementType]="'img'">
+    </qrcode>
+  </div>
+
+  <div class="modal-actions" style="display: flex; gap: 12px; justify-content: center; margin-top: 1.5rem;">
+    <button class="btn-print" (click)="printQr()">
+      <i class="bi bi-printer"></i> {{ 'Button.Print' | translate }}
+    </button>
+    <button class="btn-close" (click)="closeModal()">
+      {{ 'Button.Close' | translate }}
+    </button>
+  </div>
+
+</app-modal>

@@ -1,0 +1,21 @@
+<div class="max-w-md space-y-1.5">
+  <label [for]="labelTitle()" class="text-sm font-bold text-gray-800 block mb-2">
+    {{ t(labelTitle()) }} @if (isRequired()) { * }
+  </label>
+  
+  <select 
+    [id]="labelTitle()"
+    [value]="value()"
+    [disabled]="isDisabled()"
+    (change)="onSelectChange($event)"
+    class="w-full rounded-lg border border-gray-350 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+    
+    <option value="" disabled selected>{{ t(placeholder()) }}</option>
+    
+    @for (item of items(); track item[valueKey()]) {
+      <option [value]="item[valueKey()]">
+        {{ item[labelKey()] }}
+      </option>
+    }
+  </select>
+</div>

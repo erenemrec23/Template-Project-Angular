@@ -1,0 +1,46 @@
+@if (routerLink()) {
+  <a [hidden]="!visible()"
+    [routerLink]="disabled() ? null : routerLink()"
+    [queryParams]="queryParams()"
+    [class]="buttonClasses()"
+    [appTooltip]="tooltipText()"
+    [tooltipPosition]="tooltipPosition()"
+    [class.opacity-60]="disabled()"
+    [class.cursor-not-allowed]="disabled()"
+    [class.pointer-events-none]="disabled()"
+    [attr.aria-disabled]="disabled() ? 'true' : null"
+    (click)="onClick($event)">
+    @if (!text()) {
+      @if (icon()) {
+        <i class="bi" [class]="icon()" [class.animate-spin]="spin()"></i>
+      }
+
+      <ng-content></ng-content>
+    } @else {
+      @if (icon()) {
+        <i class="bi" [class]="icon()" [class.animate-spin]="spin()"></i>
+      }
+      <span>{{ text() }}</span>
+    }
+  </a>
+} @else {
+  <button [hidden]="!visible()"
+    [type]="type()"
+    [disabled]="disabled()"
+    [class]="buttonClasses()"
+    [appTooltip]="tooltipText()"
+    [tooltipPosition]="tooltipPosition()"
+    (click)="onClick($event)">
+    @if (!text()) {
+      @if (icon()) {
+        <i class="bi" [class]="icon()" [class.animate-spin]="spin()"></i>
+      }
+      <ng-content></ng-content>
+    } @else {
+      @if (icon()) {
+        <i class="bi" [class]="icon()" [class.animate-spin]="spin()"></i>
+      }
+      <span>{{ text() }}</span>
+    }
+  </button>
+}

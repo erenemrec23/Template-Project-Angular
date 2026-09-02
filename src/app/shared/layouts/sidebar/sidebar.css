@@ -1,0 +1,206 @@
+/* shared/components/sidebar/sidebar.component.css */
+
+:host {
+  display: contents;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 72px;
+  background: #0a2e57; /* MS SQL Server lacivert */
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease;
+  z-index: 1000;
+  overflow: visible;
+}
+
+.sidebar--expanded {
+  width: 240px;
+}
+
+/* Logo */
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar__logo-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff;
+  overflow: hidden;
+}
+
+.sidebar__logo-icon {
+  font-size: 1.4rem;
+  color: #4cc2ff;
+  flex-shrink: 0;
+}
+
+.sidebar__logo-text {
+  font-weight: 600;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+.logo-text-accent {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+/* Toggle button */
+.sidebar__toggle {
+  position: absolute;
+  top: 20px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #4cc2ff;
+  border: 2px solid #0a2e57;
+  color: #0a2e57;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.65rem;
+  z-index: 1001;
+  transition: background 0.15s;
+}
+
+.sidebar__toggle:hover {
+  background: #2fb6ff;
+}
+
+/* User info */
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.sidebar__user-avatar {
+  font-size: 1.8rem;
+  color: #94a3b8;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.sidebar__user-name {
+  color: #e2e8f0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Nav */
+.sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: visible;
+  padding: 12px 0;
+}
+
+.sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar__item {
+  position: relative;
+}
+
+.sidebar__item--logout {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 24px;
+  color: #94a3b8;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.sidebar__link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.sidebar__link--active {
+  background: rgba(76, 194, 255, 0.18);
+  color: #4cc2ff;
+  border-right: 3px solid #4cc2ff;
+}
+
+.sidebar__icon {
+  font-size: 1.15rem;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar__label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Popover (sadece daraltılmışken) */
+.sidebar__popover {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  background: #0f172a;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 1002;
+}
+
+.sidebar__popover::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #0f172a;
+}
+
+.has-popover:hover .sidebar__popover {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Genişletilmişken popover hiç gösterilmiyor zaten DOM'da yok */
+
+/* Content alanı bu sidebar genişliğine göre kaymalı */

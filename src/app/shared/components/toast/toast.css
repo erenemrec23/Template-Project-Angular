@@ -1,0 +1,7 @@
+.animate-slide-in-bottom {
+      animation: toastInBottom 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes toastInBottom {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }

@@ -1,0 +1,22 @@
+<div role="tablist"
+     class="inline-flex items-center gap-1 p-1 mb-6 rounded-xl bg-slate-100 border border-slate-200">
+  @for (tab of tabs(); track tab.id) {
+    <button type="button"
+      role="tab"
+      [attr.aria-selected]="value() === tab.id"
+      [disabled]="tab.disabled"
+      (click)="select(tab)"
+      [class.bg-white]="value() === tab.id"
+      [class.text-blue-600]="value() === tab.id"
+      [class.shadow-sm]="value() === tab.id"
+      [class.ring-1]="value() === tab.id"
+      [class.ring-slate-200]="value() === tab.id"
+      [class.text-slate-500]="value() !== tab.id"
+      [class.hover:text-slate-700]="value() !== tab.id"
+      [class.hover:bg-white]="value() !== tab.id"
+      class="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200
+             cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+      {{ tab.label }}
+    </button>
+  }
+</div>

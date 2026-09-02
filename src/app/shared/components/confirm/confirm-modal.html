@@ -1,0 +1,38 @@
+@if (isOpen()) {
+  <div class="fixed inset-0 bg-slate-900/45 flex items-center justify-center z-[1050] animate-backdrop-fade-in confirm-backdrop" 
+       (click)="onBackdropClick($event)">
+    
+    <div class="bg-white rounded-2xl p-7 w-[90%] max-w-[420px] shadow-2xl transform transition-all animate-modal-scale-up" 
+         role="dialog" 
+         aria-modal="true" 
+         [attr.aria-labelledby]="'confirm-title'">
+      
+      <div class="flex items-center gap-2.5 mb-3">
+        <i class="bi bi-exclamation-circle text-amber-500 text-2xl leading-none"></i>
+        <h5 class="m-0 text-[1.05rem] font-bold text-slate-800 tracking-tight" id="confirm-title">
+          {{ title() }}
+        </h5>
+      </div>
+      
+      <p class="text-slate-500 text-[0.92rem] child:break-words leading-relaxed m-0 mb-6">
+        {{ message() }}
+      </p>
+      
+      <div class="flex justify-end gap-2.5">
+        
+        <button type="button" 
+                class="inline-flex items-center gap-1.5 px-4 py-2 border-0 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer transition-all duration-150 active:scale-95 focus:outline-none" 
+                (click)="cancelled.emit()">
+          <i class="bi bi-x-lg"></i> {{ cancelButtonText() }}
+        </button>
+        
+        <button type="button" 
+                class="inline-flex items-center gap-1.5 px-4 py-2 border-0 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition-all duration-150 active:scale-95 shadow-md shadow-blue-500/15 focus:outline-none" 
+                (click)="confirmed.emit()">
+          <i class="bi bi-check-lg text-base"></i> {{ confirmButtonText() }}
+        </button>
+        
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,70 @@
+/* shared/components/form-input/form-input.css */
+
+/* Inputu saran ana kapsayıcı dikey düzende olacak */
+::ng-deep .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem; /* Form alanları arasında temiz bir boşluk */
+  width: 100%;
+}
+
+/* Etiket tasarımı */
+::ng-deep .form-group label {
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.9rem;
+  display: block;
+}
+
+/* Zorunlu alanların kırmızı yıldızı */
+::ng-deep .form-group .required {
+  color: #e03131;
+}
+
+/* Input kutusunun modern kurumsal tasarımı */
+::ng-deep .form-group input {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #334155;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
+  width: 100%;
+  box-sizing: border-box; /* Taşmaları engellemek için kritik */
+}
+
+/* Input odaklandığında (Focus durumu) */
+::ng-deep .form-group input:focus {
+  outline: none;
+  border-color: #e03131;
+  box-shadow: 0 0 0 3px rgba(224, 49, 49, 0.1);
+  background-color: #ffffff;
+}
+
+/* Validasyon Hatası Aldığındaki Kenarlık ve Arka Plan */
+::ng-deep .form-group input.error-field {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+/* Input altındaki kırmızı hata mesajı yazısı */
+::ng-deep .form-group .error-text {
+  color: #ef4444;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+::ng-deep.readonly-field {
+  background-color: #f3f4f6; /* Tailwind gray-100 */
+  color: #6b7280;            /* Tailwind gray-500 */
+  cursor: default;
+  border-color: #e5e7eb;     /* Tailwind gray-200 */
+}
+
+::ng-deep .readonly-field:focus {
+  outline: none;
+  box-shadow: none;
+}

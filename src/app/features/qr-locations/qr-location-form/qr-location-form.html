@@ -1,0 +1,60 @@
+<div class="w-full max-w-4xl mx-auto p-4 md:p-6 transition-all duration-150">
+
+  <app-form-header>
+  </app-form-header>
+
+  <form app-form-wrapper
+        [formGroup]="formGroup"
+        [cancelUrl]="returnUrl() || '/qr-locations'"
+        [isSubmitting]="isSubmitting()"
+        [submitButtonText]="isEditMode() ? t('Button.Update') : t('Button.Save')"
+        (ngSubmit)="onSubmit()"
+         (onCancel)="onCancel()"
+          [readonly]="isViewReadonlyMode()"
+        >
+
+    <div class="grid grid-cols-1 gap-4 max-w-xl">
+
+      <app-form-input
+        [formGroup]="formGroup"
+        controlName="name"
+        [label]="t('Label.QrLocationName')"
+        [placeholder]="t('Placeholder.QrLocationName')"
+        [required]="true"
+        [readonly]="isViewReadonlyMode()"
+        [isSubmitted]="isSubmitting()">
+      </app-form-input>
+
+      <app-form-input
+        [formGroup]="formGroup"
+        controlName="locationName"
+        [label]="t('Label.LocationName')"
+        [placeholder]="t('Placeholder.LocationName')"
+        [readonly]="isViewReadonlyMode()"
+        [isSubmitted]="isSubmitting()">
+      </app-form-input>
+
+      <!-- NOT: Tarih alanları için projede özel bir date-picker bileşeniniz varsa
+           (ör. app-form-date), app-form-input yerine onu kullanın. -->
+      <app-form-input
+        [formGroup]="formGroup"
+        controlName="startDate"
+        type="date"
+        [label]="t('Label.StartDate')"
+        [readonly]="isViewReadonlyMode()"
+        [isSubmitted]="isSubmitting()">
+      </app-form-input>
+
+      <app-form-input
+        [formGroup]="formGroup"
+        controlName="endDate"
+        type="date"
+        [label]="t('Label.EndDate')"
+        [readonly]="isViewReadonlyMode()"
+        [isSubmitted]="isSubmitting()">
+      </app-form-input>
+
+    </div>
+
+  </form>
+</div>

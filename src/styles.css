@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@theme {
+  --animate-popover-fade-in: filterPopoverFadeIn 0.12s ease-out;
+  --font-sans: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  @keyframes filterPopoverFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+ 
+  
+  /* YENİ: Modal Açılış Animasyon Tanımı (cubic-bezier esnemesiyle birlikte) */
+  --animate-modal-scale-up: modalScaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+ 
+
+  @keyframes modalScaleUp {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+ 
+  
+  /* YENİ: Sağ alt köşeden pürüzsüzce kayarak gelen toast animasyonu */
+  --animate-toast-slide-in: toastInBottom 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  
+ 
+
+  @keyframes toastInBottom {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+}
+ 
+   
+@keyframes rotateClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Küresel Yazıcı Ayarı */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+ 
+
+
+ 

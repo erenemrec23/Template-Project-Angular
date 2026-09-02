@@ -1,0 +1,116 @@
+<!-- shared/components/table/table-header-filter/table-header-filter.html -->
+<div class="flex items-center justify-between w-full gap-2">
+  
+  <!-- Sol Taraftaki Butonlar Grubu -->
+  <div class="flex items-center gap-2">
+    <app-shared-button 
+      variantClass="btn-default"
+      icon="bi-x-circle"
+      [text]="'Label.ClearFilters' | translate"
+      (click)="onClearClick()" [visible]="hasActiveFilters()" /> 
+    @if(!showPassived())
+      {
+        <app-shared-button 
+      variantClass="btn-default"
+      icon="bi bi-check-all"
+      [text]="'Label.SelectAll' | translate"
+      (click)="onToggleSelectAllClick()" [visible]="canBulkSetPassive() && showSelectAll()" /> 
+      
+      }
+      @else {
+<app-shared-button 
+      variantClass="btn-default"
+      icon="bi bi-check-all"
+      [text]="'Label.SelectAll' | translate"
+      (click)="onToggleSelectAllClick()" [visible]="canBulkDelete() && showSelectAll()" /> 
+      
+      }
+    
+    <app-shared-button 
+      variantClass="btn-default"
+      icon="bi bi-x"
+      [text]="'Label.ClearSelectedRows' | translate"
+      (click)="onToggleClearAlllClick()" [visible]="hasSelection()" /> 
+       
+    @if (hasSelection()) {
+
+      @if(!showPassived())
+      {
+          <app-shared-button 
+      variantClass="btn-default"
+       
+      (click)="onBulkSetPassiveClick()" [visible]="canBulkSetPassive()" >
+      <i class="bi bi-trash3-fill"></i>
+    <span>{{ 'Label.SetPassivedAllSelected' | translate }} ({{ selectedCount() }})</span> 
+          </app-shared-button> 
+       
+      }
+      @else{ 
+        
+          <app-shared-button 
+      variantClass="btn-default"
+       
+      (click)="onBulkDeleteClick()" [visible]="canBulkDelete()" >
+      <i class="bi bi-trash3-fill"></i>
+    <span>{{ 'Label.DeleteAllSelected' | translate }} ({{ selectedCount() }})</span> 
+          </app-shared-button> 
+       
+          <app-shared-button 
+      variantClass="btn-default"
+       
+      (click)="onBulkSetActiveClick()" [visible]="canBulkSetActive()" >
+      <i class="bi bi-database-check"></i>
+    <span>{{ 'Label.SetActiveAllSelected' | translate }} ({{ selectedCount() }})</span> 
+          </app-shared-button> 
+       
+      }
+    }
+  </div>
+ 
+  <div class="flex items-center gap-2 shrink-0">
+     
+    @if (canViewPassive()) {
+      <div class="inline-flex items-center gap-0.5 p-0.5 bg-gray-100 rounded-md shrink-0">
+        <label
+          class="relative flex items-center gap-1.5 px-2 h-[26px] text-[11px] font-semibold rounded-sm cursor-pointer transition-all duration-150"
+          [class.bg-white]="!showPassived()"
+          [class.shadow-sm]="!showPassived()"
+          [class.text-blue-900]="!showPassived()"
+          [class.text-gray-500]="showPassived()">
+          <input type="radio" name="showPassived" class="sr-only"
+                 [checked]="!showPassived()" (change)="onResetPageClick();showPassived.set(false);">
+          <span class="w-1.5 h-1.5 rounded-full"
+                [class.bg-blue-900]="!showPassived()"
+                [class.bg-gray-300]="showPassived()"></span>
+          {{ 'Label.Active' | translate }}
+        </label>
+
+        <label
+          class="relative flex items-center gap-1.5 px-2 h-[26px] text-[11px] font-semibold rounded-sm cursor-pointer transition-all duration-150"
+          [class.bg-white]="showPassived()"
+          [class.shadow-sm]="showPassived()"
+          [class.text-red-700]="showPassived()"
+          [class.text-gray-500]="!showPassived()">
+          <input type="radio" name="showDeletedFilter" class="sr-only"
+                 [checked]="showPassived()" (change)="onResetPageClick();showPassived.set(true);">
+          <span class="w-1.5 h-1.5 rounded-full"
+                [class.bg-red-600]="showPassived()"
+                [class.bg-gray-300]="!showPassived()"></span>
+          {{ 'Label.Passive' | translate }}
+        </label>
+      </div>
+    }
+
+    <!-- Arama Kutusu (Textbox) -->
+    <div class="relative w-full min-w-[240px] max-w-[300px] flex items-center"> 
+      <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i> 
+      <input type="text" 
+             [(ngModel)]="searchQuery" 
+             (ngModelChange)="onSearchChange()"
+             [placeholder]="'Label.SearchData' | translate" 
+             class="w-full py-1.5 pl-9 pr-3 h-[34px] text-sm text-slate-800 bg-white border border-slate-300 rounded-md outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition-all placeholder-slate-400" /> 
+    </div>
+
+  </div>
+
+</div>

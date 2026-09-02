@@ -1,0 +1,167 @@
+/* ==========================================
+   1. ORTAK BUTON YAPISI (BASE STYLES)
+   ========================================== */
+:host ::ng-deep .btn-shared {
+  cursor: pointer;
+  font-weight: 500;
+  
+  /* MERKEZİ YÜKSEKLİK KONTROLÜ: Tüm buton yükseklikleri burada eşitlendi */
+  height: 32px; 
+  padding: 0 16px; /* Dikey padding sıfırlandı, dikey hizalamayı height + inline-flex yönetiyor */
+  
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center; /* İkon ve yazıyı dikeyde milimetrik olarak ortalar */
+  justify-content: center;
+  gap: 8px; /* İkon ile yazı arasındaki boşluk */
+}
+
+/* Global Kilitli (Disabled) Durumu */
+:host ::ng-deep .btn-shared:disabled,
+:host ::ng-deep .btn-excel:disabled,
+:host ::ng-deep .btn-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================
+   2. GENEL AKSİYON BUTONLARI (TOOLBAR)
+   ========================================== */
+
+/* Yeni Ekle Buton Stili */
+:host ::ng-deep .btn-add {
+  background-color: #e03131;
+  color: white;
+  padding: 0 20px; /* Ekle butonu için yatayda biraz daha geniş alan */
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(224, 49, 49, 0.15);
+}
+
+:host ::ng-deep .btn-add:hover:not(:disabled) {
+  background-color: #c92a2a;
+  transform: translateY(-1px);
+}
+
+/* Yenileme Buton Stili */
+:host ::ng-deep .btn-refresh {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .btn-refresh:hover:not(:disabled) {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Excel Export Buton Stili */
+:host ::ng-deep .btn-excel {
+  background-color: #10b981;
+  color: white;
+  border: 1px solid #059669;
+}
+
+:host ::ng-deep .btn-excel:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+/* Excel Import Buton Stili */
+:host ::ng-deep .btn-excel-import {
+  background-color: #0d9488;
+  color: #ffffff;
+  border: 1px solid #0f766e;
+}
+
+:host ::ng-deep .btn-excel-import:hover:not(:disabled) {
+  background-color: #0f766e;
+}
+
+/* ==========================================
+   3. SATIR İÇİ YUVARLAK İKON BUTONLARI (GRID/TABLE ACTIONS)
+   ========================================== */
+:host ::ng-deep .btn-shared-edit, 
+:host ::ng-deep .btn-shared-qr {
+  /* Kusursuz kare ve tam yuvarlak form için yükseklik değerine eşitlendi */
+  width: 38px;  
+  height: 38px; 
+  
+  padding: 0 !important; /* İç boşluğu sıfırlayarak ikonun kaymasını engelliyoruz */
+  border-radius: 50% !important; /* Butonu tam yuvarlak yapar */
+  font-size: 1.1rem !important; /* İkon netliği */
+}
+
+/* Düzenle Buton Renklendirmesi */
+:host ::ng-deep .btn-shared-edit {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+:host ::ng-deep .btn-shared-edit:hover:not(:disabled) {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+/* QR Kod / Silme Buton Renklendirmesi */
+:host ::ng-deep .btn-shared-qr {
+  background-color: #fff5f5;
+  color: #e03131;
+  border: 1px solid #ffe3e3;
+}
+
+:host ::ng-deep .btn-shared-qr:hover:not(:disabled) {
+  background-color: #e03131;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(224, 49, 49, 0.2);
+}
+
+/* shared/components/form-cancel-button/form-cancel-button.css */
+
+:host ::ng-deep .btn-cancel {
+  background-color: #f1f5f9;
+  color: #475569; 
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+:host ::ng-deep .btn-cancel:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+ 
+
+
+:host ::ng-deep .btn-submit {
+  background-color: #e03131;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(224, 49, 49, 0.15);
+}
+
+/* Seçenek A: Doğrudan pseudo-class kullanarak (Önerilen) */
+:host ::ng-deep .btn-submit:hover:not(:disabled) {
+  background-color: #c92a2a;
+}
+
+ 
+
+/* Form geçersizken veya istek işlenirken butonun alacağı kilitli mod stili */
+:host ::ng-deep .btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+:host ::ng-deep .spin {
+  animation: rotateClockwise 1s linear infinite;
+  display: inline-block;
+}

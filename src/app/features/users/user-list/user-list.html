@@ -1,0 +1,187 @@
+<div class="container">
+
+  <app-table-toolbar
+    [title]="titleKey()"
+    [showImportButton]="true"
+    [showExportButton]="true"
+    (openImport)="isExcelModalOpen.set(true)"
+    (refresh)="loadData()"
+    (exportDataListExcel)="downloadExportDataListExcel()"
+    [addButtonRouterLink]="['/users/form']" 
+     [extraActions]="toolbarExtraActions">
+  </app-table-toolbar>
+  
+
+  @if (isExcelModalOpen()) {
+    <app-excel-import-modal
+      [validateEndpoint]="'appusers/validate-excel'"
+      [commitEndpoint]="'appusers/bulk-create'"
+      [columns]="excelColumns"
+      (close)="isExcelModalOpen.set(false)"
+      (importCompleted)="loadData()"
+      (downloadTemplate)="downloadExportDataListExcel()"
+      (bulkCreate)="bulkCreate($event.data, $event.onSuccess, $event.onError, $event.onFinally)"
+      (exportSampleDataListExcel)="downloadExportSampleDataListExcel()">
+    </app-excel-import-modal>
+  }
+
+  <div table-header-filter
+       [(searchQuery)]="filters().globalSearch"
+       (searchChange)="onInputChange()"
+       (clearFilters)="clearFilters()"
+       [hasSelection]="hasSelection()"
+       [selectedCount]="selectedIds().size"
+       (bulkDelete)="onBulkAction()"
+       (bulkSetActive)="onBulkSetActiveRole()"
+       (bulkSetPassive)="onBulkSetPassiveRole()"
+       [showSelectAll]="true"
+       (toggleSelectAll)="toggleSelectAll()"
+       (toggleClearAll)="toggleClearAll()"
+       [showPassivedFilter]="true"
+       [(showPassived)]="showPassived"
+       (resetPage)="resetPage()">
+  </div>
+
+  <app-table>
+    <thead>
+      <tr>
+        <th appTableCellHeaderActions></th>
+
+        <th appTableCellHeader
+            field="revNum"
+            labelKey="Label.RevNum"
+            type="number"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().revNumCondition"
+            [(value)]="filters().revNumValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()"
+            width="150px">
+        </th>
+
+        <th appTableCellHeader
+            field="firstName"
+            labelKey="Label.FirstName"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().firstNameCondition"
+            [(value)]="filters().firstNameValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th appTableCellHeader
+            field="lastName"
+            labelKey="Label.LastName"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().lastNameCondition"
+            [(value)]="filters().lastNameValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th appTableCellHeader
+            field="email"
+            labelKey="Label.Email"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().emailCondition"
+            [(value)]="filters().emailValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th appTableCellHeader
+            type="date"
+            field="createdDate"
+            labelKey="Label.CreatedDateTime"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().createdDateCondition"
+            [(value)]="filters().createdDateValue"
+            [(value2)]="filters().createdDateValue2"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()"></th>
+
+        <th appTableCellHeader
+            field="CreatedByUser.FullName"
+            labelKey="Label.CreatedUserFullName"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().createdUserFullNameCondition"
+            [(value)]="filters().createdUserFullNameValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th appTableCellHeader
+            type="date"
+            field="modifiedDate"
+            labelKey="{{ showPassived() ? 'Label.PassivedDateTime' : 'Label.ModifiedDateTime' }}"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().modifiedDateCondition"
+            [(value)]="filters().modifiedDateValue"
+            [(value2)]="filters().modifiedDateValue2"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()"></th>
+
+        <th appTableCellHeader
+            field="modifiedByUser.FullName"
+            labelKey="{{ showPassived() ? 'Label.PassivedUserFullName' : 'Label.ModifiedUserFullName' }}"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().modifiedUserFullNameCondition"
+            [(value)]="filters().modifiedUserFullNameValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (row of items(); track row.id) {
+        <tr>
+          <td class="table-actions">
+            <app-table-row-actions
+              [id]="row.id"
+              [editRouterLink]="['/users/form', row.id]"
+              [hasSelection]="hasSelection()"
+              [isSelected]="selectedIds().has(row.id!)"
+              (selected)="toggleSelection($event)"
+              (deleted)="onDeleteUser($event)"
+              (setActive)="onSetActiveUser($event)"
+              [isPassivedRow]="showPassived()"
+              [extraActions]="rowExtraActions(row)">
+            </app-table-row-actions>
+          </td>
+
+          <td app-table-cell-text tooltipPosition="left" [text]="row.revNum"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="row.firstName"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="row.lastName"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="row.email"></td>
+          <td app-table-cell-datetime tooltipPosition="left" [value]="row.createdDateTime"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="row.createdUserFullName"></td>
+          <td app-table-cell-datetime tooltipPosition="left" [value]="row.modifiedDateTime"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="row.modifiedUserFullName"></td>
+        </tr>
+      } @empty {
+        <tr app-table-empty-state></tr>
+      }
+    </tbody>
+  </app-table>
+
+  <app-table-pagination
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [totalCount]="totalCount()"
+    [totalPages]="totalPages()"
+    [hasNext]="hasNext()"
+    [hasPrevious]="hasPrevious()"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)">
+  </app-table-pagination>
+
+</div>

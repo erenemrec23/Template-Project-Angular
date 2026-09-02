@@ -1,0 +1,108 @@
+<div class="max-w-4xl mx-auto my-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100 space-y-6">
+
+  <!-- Adım göstergesi -->
+  <div class="flex items-center gap-3 text-sm font-semibold">
+    @if (isBulkMode()) {
+      <span [class]="step()==='targets' ? 'text-blue-600' : 'text-slate-400'">1. {{ t(targetStepLabel()) }}</span>
+      <i class="bi bi-chevron-right text-slate-300"></i>
+    }
+    <span [class]="step()==='select' ? 'text-blue-600' : 'text-slate-400'">{{ isBulkMode() ? '2.' : '1.' }} {{ t('Title.Wizard.SelectStep') }}</span>
+    <i class="bi bi-chevron-right text-slate-300"></i>
+    <span [class]="step()==='perms' ? 'text-blue-600' : 'text-slate-400'">{{ isBulkMode() ? '3.' : '2.' }} {{ t('Title.Wizard.PermissionStep') }}</span>
+  </div>
+
+  <!-- ADIM: HEDEF SEÇİMİ (yalnızca çoklu mod; [hidden] ile mount kalır, seçim korunur) -->
+  @if (isBulkMode()) {
+    <div [hidden]="step() !== 'targets'" class="space-y-4">
+      <app-multi-select
+        [fetchAll]="fetchTargets()!"
+        [labelFn]="targetLabelFn()"
+        (selectionChange)="onTargetsChange($event)" />
+
+      <div class="flex justify-between items-center pt-2">
+        <app-form-cancel-button [routerLink]="cancelUrl()" (buttonClick)="handleCancel()"></app-form-cancel-button>
+        <button type="button" (click)="goNext()" [disabled]="!canProceedTargets()"
+          class="px-5 py-2 rounded-lg bg-blue-600 text-white font-semibold disabled:opacity-40">
+          {{ t('Wizard.Next') }} <i class="bi bi-arrow-right ml-1"></i>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ADIM: MODÜL / SAYFA SEÇİMİ -->
+  <div [hidden]="step() !== 'select'" class="space-y-6">
+    <div class="inline-flex rounded-lg border border-slate-200 p-1 bg-slate-50">
+      <button type="button" (click)="setMode('module')"
+        [class]="mode()==='module' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'"
+        class="px-4 py-1.5 text-sm font-semibold rounded-md transition">{{ t('Title.Wizard.ByModule') }}</button>
+      <button type="button" (click)="setMode('page')"
+        [class]="mode()==='page' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'"
+        class="px-4 py-1.5 text-sm font-semibold rounded-md transition">{{ t('Title.Wizard.ByPage') }}</button>
+    </div>
+
+    @if (mode() === 'module') {
+      <div class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+        @for (g of groups(); track g.key) {
+          <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" [checked]="isGroupSelected(g.key)" (change)="toggleGroup(g.key)" class="w-4 h-4 accent-blue-600" />
+            <span class="font-semibold text-slate-800">{{ t('MenuGroup.'+g.key) }}</span>
+            <span class="text-xs text-slate-400">({{ g.pages.length }})</span>
+          </label>
+        }
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[50vh] overflow-y-auto pr-1">
+        @for (p of pages(); track p.pageKey) {
+          <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" [checked]="isPageSelected(p.pageKey)" (change)="togglePage(p.pageKey)" class="w-4 h-4 accent-blue-600" />
+            <span class="text-sm text-slate-800">{{ t('PageTitle.'+p.key) }}</span>
+          </label>
+        }
+      </div>
+    }
+
+    <div class="flex justify-between items-center pt-2">
+      <div class="flex items-center gap-2">
+        <app-form-cancel-button [routerLink]="cancelUrl()" (buttonClick)="handleCancel()"></app-form-cancel-button>
+        @if (isBulkMode()) {
+          <button type="button" (click)="goBack()" class="px-5 py-2 rounded-lg border border-slate-300 text-slate-600 font-semibold">
+            <i class="bi bi-arrow-left mr-1"></i> {{ t('Wizard.Back') }}
+          </button>
+        }
+      </div>
+      <button type="button" (click)="goNext()" [disabled]="!canProceedSelect()"
+        class="px-5 py-2 rounded-lg bg-blue-600 text-white font-semibold disabled:opacity-40">
+        {{ t('Wizard.Next') }} <i class="bi bi-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ADIM: YETKİLER -->
+  <div [hidden]="step() !== 'perms'" class="space-y-6">
+    
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+      @for (opt of permissionOptions; track opt.value) {
+        <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-200 cursor-pointer select-none"
+          [class.opacity-40]="opt.value !== VIEW && !isPermChecked(VIEW)">
+          <input type="checkbox" [checked]="isPermChecked(opt.value)" (change)="togglePerm(opt.value)"
+            [disabled]="opt.value !== VIEW && !isPermChecked(VIEW)" class="w-4 h-4 accent-blue-600" />
+          <span class="text-xs font-medium text-slate-700">{{ opt.label | translate }}</span>
+        </label>
+      }
+    </div>
+
+    <div class="flex justify-between items-center pt-2">
+      <div class="flex items-center gap-2">
+        <app-form-cancel-button [routerLink]="cancelUrl()" (buttonClick)="handleCancel()"></app-form-cancel-button>
+        <button type="button" (click)="goBack()" class="px-5 py-2 rounded-lg border border-slate-300 text-slate-600 font-semibold">
+          <i class="bi bi-arrow-left mr-1"></i> {{ t('Wizard.Back') }}
+        </button>
+      </div>
+      <button type="button" (click)="save()" [disabled]="!canSave() || isSaving()"
+        class="px-5 py-2 rounded-lg bg-green-600 text-white font-semibold disabled:opacity-40">
+        <i class="bi bi-check-lg mr-1"></i> {{ t('Button.Save') }}
+      </button>
+    </div>
+  </div>
+</div>

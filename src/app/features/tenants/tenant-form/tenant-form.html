@@ -1,0 +1,31 @@
+<div class="w-full max-w-4xl mx-auto p-4 md:p-6 transition-all duration-150">
+  
+  <app-form-header  >
+  </app-form-header>
+
+  <form app-form-wrapper
+        [formGroup]="formGroup"
+        [cancelUrl]="returnUrl() || '/tenants'"
+        [isSubmitting]="isSubmitting()"
+        [submitButtonText]="isEditMode() ? t('Button.Update') : t('Button.Save')" 
+        (ngSubmit)="onSubmit()"
+         (onCancel)="onCancel()"
+          [readonly]="isViewReadonlyMode()"
+        >
+    
+    <div class="grid grid-cols-1 gap-4 max-w-xl">
+      
+      <app-form-input
+        [formGroup]="formGroup"
+        controlName="name"
+        [label]="t('Label.TenantCompany')"
+        [placeholder]="t('Placeholder.TenantCompany')"
+        [required]="true" 
+        [readonly]="isViewReadonlyMode()"
+        [isSubmitted]="isSubmitting()">
+      </app-form-input>
+
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,202 @@
+<div class="container">
+
+  <app-table-toolbar
+    [title]="titleKey()"
+    [showImportButton]="false"
+    [showExportButton]="false"
+    (openImport)="isExcelModalOpen.set(true)"
+    (refresh)="loadData()" >
+  </app-table-toolbar>
+
+  @if (isExcelModalOpen()) {
+    <app-excel-import-modal
+      [validateEndpoint]="'feedbacks/validate-excel'"
+      [commitEndpoint]="'feedbacks/bulk-create'"
+      [columns]="excelColumns"
+      (close)="isExcelModalOpen.set(false)"
+      (importCompleted)="loadData()"
+      (downloadTemplate)="downloadExportDataListExcel()"
+      (bulkCreate)="bulkCreate($event.data, $event.onSuccess, $event.onError, $event.onFinally)"
+      (exportSampleDataListExcel)="downloadExportSampleDataListExcel()">
+    </app-excel-import-modal>
+  }
+
+  <div table-header-filter
+       [(searchQuery)]="filters().globalSearch"
+       (searchChange)="onInputChange()"
+       (clearFilters)="clearFilters()"
+       [hasSelection]="hasSelection()"
+       [selectedCount]="selectedIds().size"
+       (bulkDelete)="onBulkAction()"
+       (bulkSetActive)="onBulkSetActiveRole()"
+       (bulkSetPassive)="onBulkSetPassiveRole()"
+       [showSelectAll]="true"
+       (toggleSelectAll)="toggleSelectAll()"
+       (toggleClearAll)="toggleClearAll()"
+       [showPassivedFilter]="true"
+       [(showPassived)]="showPassived"
+       (resetPage)="resetPage()">
+  </div>
+
+  <app-table>
+    <thead>
+      <tr>
+        <th appTableCellHeaderActions></th>
+
+        <th appTableCellHeader
+            field="CreatedDateTime"
+            labelKey="Label.CreatedDateTime"
+            type="date"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().createdDateCondition"
+            [(value)]="filters().createdDateValue"
+            [(value2)]="filters().createdDateValue2"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th appTableCellHeader 
+            field="CreatedByUser.UserName"
+            labelKey="Label.UserEmail"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().creatorEmailCondition"
+            [(value)]="filters().creatorEmailValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th appTableCellHeader
+            field="comment"
+            labelKey="Label.Comment"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().commentCondition"
+            [(value)]="filters().commentValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th appTableCellHeader
+            field="pageUrl"
+            labelKey="Label.PageUrl"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            [(condition)]="filters().pageUrlCondition"
+            [(value)]="filters().pageUrlValue"
+            (sortChange)="toggleSort($event)"
+            (filterChange)="onInputChange()">
+        </th>
+
+        <th class="p-4 font-semibold text-slate-600 text-xs uppercase">{{ 'Label.Screenshot' | translate }}</th>
+
+        <th appTableCellHeader
+            field="status"
+            labelKey="Label.Status"
+            [currentSortField]="filters().sortField"
+            [currentSortOrder]="filters().sortOrder"
+            (sortChange)="toggleSort($event)">
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (feedback of items(); track feedback.id) {
+        <tr>
+          <td class="table-actions">
+            <app-table-row-actions
+              [id]="feedback.id ?? ''"
+              [editRouterLink]="['/feedbacks/form', feedback.id]"
+              [hasSelection]="hasSelection()"
+              [isSelected]="selectedIds().has(feedback.id!)"
+              (selected)="toggleSelection($event)"
+              (deleted)="onDeleteFeedback($event)"
+              (setActive)="onSetActiveFeedback($event)"
+              [isPassivedRow]="showPassived()"
+              [extraActions]="rowExtraActions(feedback)">
+            </app-table-row-actions>
+          </td>
+
+          <td app-table-cell-datetime tooltipPosition="left" [value]="feedback.createdDateTime"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="feedback.creatorEmail || 'Anonim'"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="feedback.comment"></td>
+          <td app-table-cell-text tooltipPosition="left" [text]="feedback.pageUrl"></td>
+
+          <td>
+            @if (feedback.screenshotPath) {
+              <button type="button" (click)="openImageModal(feedback.screenshotPath)" class="px-2 py-1 text-xs bg-slate-100 hover:bg-slate-200 rounded border border-slate-300">
+                <i class="bi bi-image mr-1"></i> {{ 'Button.View' | translate }}
+              </button>
+            } @else {
+              <span class="text-xs text-slate-400">-</span>
+            }
+          </td>
+
+          <td>
+            <span [class]="{
+              'bg-amber-50 text-amber-700 border-amber-200': feedback.status === FeedbackStatus.Pending,
+              'bg-blue-50 text-blue-700 border-blue-200': feedback.status === FeedbackStatus.InProgress,
+              'bg-emerald-50 text-emerald-700 border-emerald-200': feedback.status === FeedbackStatus.Completed
+            }" class="px-2.5 py-1 rounded-full text-xs font-semibold border">
+              {{ feedback.status === FeedbackStatus.Pending ? ('Label.Pending' | translate) : feedback.status === FeedbackStatus.InProgress ? ('Label.InProgress' | translate) : ('Label.Completed' | translate) }}
+            </span>
+          </td>
+        </tr>
+      } @empty {
+        <tr app-table-empty-state></tr>
+      }
+    </tbody>
+  </app-table>
+
+  <app-table-pagination
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [totalCount]="totalCount()"
+    [totalPages]="totalPages()"
+    [hasNext]="hasNext()"
+    [hasPrevious]="hasPrevious()"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)">
+  </app-table-pagination>
+
+</div>
+
+<!-- Görsel Modal -->
+<app-modal [size] = "'2xl'" [isOpen]="isImageModalOpen()" [title]="'Label.Screenshot' | translate" (closeModal)="isImageModalOpen.set(false)">
+  <div class="p-2">
+    <img [src]="selectedImage()" class="w-full h-auto rounded border" />
+  </div>
+</app-modal>
+
+<!-- Detay ve Yorumlaşma Modal -->
+<app-modal [isOpen]="isDetailModalOpen()" [title]="'Label.DetailAndComments' | translate" (closeModal)="isDetailModalOpen.set(false)">
+  <div class="space-y-4 p-2">
+    <div class="p-3 bg-slate-50 border rounded-lg">
+      <p class="text-sm font-semibold text-slate-800">{{ selectedFeedback()?.comment }}</p>
+      <p class="text-xs text-slate-400 mt-1">{{ selectedFeedback()?.pageUrl }}</p>
+    </div>
+
+    <!-- Sohbet Geçmişi -->
+    <div class="space-y-3 max-h-[300px] overflow-y-auto p-2 border rounded-lg bg-slate-50/50">
+      @for (c of comments(); track c.id) {
+        <div class="flex flex-col" [class.items-end]="c.isAdminResponse" [class.items-start]="!c.isAdminResponse">
+          <span class="text-[10px] text-slate-400 mb-0.5">{{ c.senderFullName }} · {{ c.createdDate | date:'dd.MM.yyyy HH:mm' }}</span>
+          <div [class]="c.isAdminResponse ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white text-slate-800 border rounded-tl-none'" class="p-2.5 rounded-xl text-xs max-w-[85%] shadow-xs">
+            {{ c.message }}
+          </div>
+        </div>
+      } @empty {
+        <p class="text-center text-xs text-slate-400 py-4">{{ 'Label.NoCommentsYet' | translate }}</p>
+      }
+    </div>
+
+    <!-- Yorum Ekleme -->
+    <div class="flex gap-2">
+      <input type="text" [(ngModel)]="newMessage" (keyup.enter)="sendComment()" [placeholder]="'Placeholder.WriteComment' | translate" class="flex-1 px-3 py-2 text-xs border rounded-lg outline-none focus:border-blue-500" />
+      <button type="button" (click)="sendComment()" [disabled]="!newMessage().trim() || isSendingComment()" class="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50">
+        {{ 'Button.Send' | translate }}
+      </button>
+    </div>
+  </div>
+</app-modal>

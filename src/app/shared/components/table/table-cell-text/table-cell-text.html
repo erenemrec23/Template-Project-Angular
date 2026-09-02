@@ -1,0 +1,6 @@
+<span [appTooltip]=" tooltip() || text()" 
+      [tooltipPosition]="tooltipPosition()" 
+      [ngClass]="customClass()"
+      class="cursor-help block truncate text-slate-700 max-w-full">
+  {{ text() | truncate:limit() }}
+</span>

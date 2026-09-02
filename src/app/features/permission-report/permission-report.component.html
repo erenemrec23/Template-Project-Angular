@@ -1,0 +1,156 @@
+<div class="container">
+
+  <app-table-toolbar
+    [title]="'PageTitle.PermissionReports' | translate"
+    [showAddButton]="false"
+    [showExportButton]="true"
+    [isLoading]="loading() || exporting()"
+    (refresh)="load()"
+    (exportDataListExcel)="exportExcel()">
+  </app-table-toolbar>
+
+  <!-- Filtre paneli -->
+  <!-- Filtre paneli -->
+<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-4 p-4 rounded-lg border border-slate-200 bg-slate-50">
+
+  <app-select
+    labelTitle="Label.OwnerType"
+    placeholder="Placeholder.All"
+    [isRequired]="false"
+    [items]="ownerTypeItems()"
+    [value]="filter().ownerType ?? ''"
+    (valueChange)="onFilterChange('ownerType', $event)">
+  </app-select>
+
+  <app-select
+    labelTitle="Label.User"
+    placeholder="Placeholder.All"
+    [isRequired]="false"
+    [items]="userItems()"
+    [value]="filter().userId ?? ''"
+    (valueChange)="onFilterChange('userId', $event)">
+  </app-select>
+
+  <app-select
+    labelTitle="Label.Role"
+    placeholder="Placeholder.All"
+    [isRequired]="false"
+    [items]="roleItems()"
+    [value]="filter().roleId ?? ''"
+    (valueChange)="onFilterChange('roleId', $event)">
+  </app-select>
+
+  <app-select
+    labelTitle="Label.MenuGroup"
+    placeholder="Placeholder.All"
+    [isRequired]="false"
+    [items]="menuGroupItems()"
+    [value]="filter().menuGroupId ?? ''"
+    (valueChange)="onFilterChange('menuGroupId', $event)">
+  </app-select>
+
+  <app-select
+    labelTitle="Label.Page"
+    placeholder="Placeholder.All"
+    [isRequired]="false"
+    [items]="pageItems()"
+    [value]="filter().pageId ?? ''"
+    (valueChange)="onFilterChange('pageId', $event)">
+  </app-select>
+
+  <app-select
+    labelTitle="Label.HasPermission"
+    placeholder="Placeholder.Any"
+    [isRequired]="false"
+    [items]="flagItems()"
+    [value]="filter().hasFlag ?? ''"
+    (valueChange)="onFilterChange('hasFlag', $event)">
+  </app-select>
+
+  <div class="col-span-2 md:col-span-3 xl:col-span-4 flex items-center gap-2">
+    <input id="f-onlyGranted" type="checkbox" class="rounded border-slate-300"
+           [ngModel]="filter().onlyGranted" (ngModelChange)="onFilterChange('onlyGranted', $event)">
+    <label for="f-onlyGranted" class="text-sm text-slate-700">{{ 'Label.OnlyGranted' | translate }}</label>
+    <span class="ml-auto text-xs text-slate-500">{{ 'Label.ReportSummary' | translate: summary() }}</span>
+  </div>
+
+  <div class="col-span-2 md:col-span-3 xl:col-span-2 flex justify-end items-end gap-2">
+    <button type="button" (click)="reset()"
+            class="px-3 py-1.5 text-sm rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100">
+      <i class="bi bi-arrow-counterclockwise"></i> {{ 'Button.Reset' | translate }}
+    </button>
+    <button type="button" (click)="load()" [disabled]="loading()"
+            class="px-3 py-1.5 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50">
+      <i class="bi bi-search"></i> {{ 'Button.Search' | translate }}
+    </button>
+  </div>
+</div>
+
+  <app-table>
+    <thead>
+      <tr>
+        <th appTableCellHeader field="ownerName" labelKey="Label.Owner"
+            [filterable]="false"
+            [currentSortField]="sortField()" [currentSortOrder]="sortOrder()"
+            (sortChange)="toggleSort($event)" width="220px"></th>
+
+        <th appTableCellHeader field="menuGroupKey" labelKey="Label.MenuGroup"
+            [filterable]="false"
+            [currentSortField]="sortField()" [currentSortOrder]="sortOrder()"
+            (sortChange)="toggleSort($event)" width="150px"></th>
+
+        <th appTableCellHeader field="key" labelKey="Label.Page"
+            [filterable]="false"
+            [currentSortField]="sortField()" [currentSortOrder]="sortOrder()"
+            (sortChange)="toggleSort($event)" width="180px"></th>
+
+        @for (f of flags; track f.value) {
+          <th appTableCellHeader [field]="f.key" [labelKey]="f.label"
+              [sortable]="false" [filterable]="false"
+              [currentSortField]="sortField()" [currentSortOrder]="sortOrder()"
+              width="90px"></th>
+        }
+
+        <th appTableCellHeader field="sources" labelKey="Label.Source"
+            [sortable]="false" [filterable]="false"
+            [currentSortField]="sortField()" [currentSortOrder]="sortOrder()"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (group of grouped(); track group[0].ownerType + ':' + group[0].ownerId) {
+        @for (r of group; track r.pageId; let first = $first) {
+          <tr>
+            @if (first) {
+              <td [attr.rowspan]="group.length"
+                  class="table-cell px-4 py-2 border-b border-slate-100 align-top bg-slate-50 font-medium text-slate-800">
+                <span class="inline-block text-[11px] px-1.5 py-0.5 rounded mr-1"
+                      [class]="r.ownerType === 1
+                        ? 'bg-indigo-100 text-indigo-700'
+                        : 'bg-slate-200 text-slate-700'">
+                  {{ ownerLabel(r.ownerType) | translate }}
+                </span>
+                {{ r.ownerName }}
+              </td>
+            }
+            <td app-table-cell-text [text]="r.menuGroupKey ? ('MenuGroup.' + r.menuGroupKey | translate) : '-'"></td>
+            <td app-table-cell-text [text]="'PageTitle.' + r.key | translate"></td>
+
+            @for (f of flags; track f.value) {
+              <td 
+              class="table-cell px-2 py-2 border-b border-slate-100 text-center align-middle"
+               [class.bg-emerald-50]="r[f.key]">
+                @if (r[f.key]) { <i  class="bi bi-check-lg text-emerald-600"></i> }
+              </td>
+            }
+
+            <td app-table-cell-text [tooltipPosition]="'left'" [text]="sourcesText(r)" [limit]="80"></td>
+          </tr>
+        }
+      } @empty {
+        <tr app-table-empty-state></tr>
+      }
+    </tbody>
+  </app-table>
+
+</div>

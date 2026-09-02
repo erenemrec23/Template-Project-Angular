@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.content-container {
+  margin-left: 72px; /* sidebar'ın daraltılmış (varsayılan) genişliği */
+  padding: 24px;
+  min-height: 100vh;
+}
+
+ 

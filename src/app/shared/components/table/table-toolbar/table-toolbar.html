@@ -1,0 +1,80 @@
+<!-- shared/components/table/table-toolbar/table-toolbar.html -->
+
+<div [class.border-2]="isDragOver()"
+     [class.border-dashed]="isDragOver()"
+     [class.border-blue-600]="isDragOver()"
+     [class.bg-blue-50/50]="isDragOver()"
+     class="flex flex-col gap-4 pb-4 sm:flex-row sm:items-center sm:justify-between mb-6 transition-all duration-150 rounded-lg"
+     (dragover)="onDragOver($event)"
+     (dragleave)="onDragLeave()"
+     (drop)="onDrop($event)">
+  
+  @if (currentPage(); as page) {
+    <div class="space-y-1">
+      <h2 class="text-xl font-bold tracking-tight text-slate-900 md:text-2xl flex items-center gap-2.5 mb-0">
+        <i [class]="page.icon" class="text-indigo-600"></i>
+        {{ title() | translate }}
+      </h2>
+    </div>
+  }
+
+  <div class="flex flex-wrap items-center gap-3 sm:justify-end shrink-0">
+
+    <!-- YENİ: Ekstra aksiyon butonları — mevcut butonların SOLUNDA -->
+    @for (action of visibleExtraActions(); track action.label) {
+      <app-shared-button
+        [variantClass]="action.variantClass || 'btn-default'"
+        [icon]="action.icon || ''" 
+        [tooltipText]="(action.tooltipText || action.label) | translate"
+        tooltipPosition="bottom"
+        [routerLink]="action.routerLink || null"
+        [queryParams]="action.queryParams || null"
+        (click)="onExtraActionClick(action)" />
+    }
+
+   <app-shared-button
+      variantClass="btn-manage-perms"
+      icon="bi-shield-lock-fill" 
+      [tooltipText]="'Label.ManagePagePermissions' | translate"
+      tooltipPosition="bottom"
+      [routerLink]="['/page-permissions']"
+      [queryParams]="{ pageKey: resolvedPageKey(), groupKey: resolvedGroupKey() }"
+      [visible]="canManagePagePermissions()" />
+
+    <app-shared-button
+      variantClass="btn-refresh"
+      icon="bi-arrow-clockwise" 
+      [tooltipText]="'Title.RefreshList' | translate"
+      tooltipPosition="bottom"
+      [disabled]="isLoading()"
+      [spin]="isLoading()"
+      (click)="onRefreshClick()" />
+ 
+    <app-shared-button
+      variantClass="btn-excel"
+      icon="bi-file-earmark-excel" 
+      [tooltipText]="'Title.ExportExcel' | translate"
+      tooltipPosition="bottom"
+      [disabled]="isLoading()"
+      (click)="onExportDataClick()" 
+      [visible]="canExportExcel()" />
+ 
+    <app-shared-button
+      variantClass="btn-excel-import"
+      icon="bi-file-earmark-arrow-up" 
+      [tooltipText]="'Title.ImportExcel' | translate"
+      tooltipPosition="bottom"
+      [disabled]="isLoading()"
+      (click)="openImportModal()" 
+      [visible]="canImportExcel()" />
+ 
+    <app-shared-button
+      variantClass="btn-add"
+      icon="bi-plus"
+      [tooltipText]="'Label.Add' | translate" 
+      tooltipPosition="bottom"
+      [routerLink]="addButtonRouterLink() || null"
+      [visible]="canAdd()" />
+
+  </div>
+</div>

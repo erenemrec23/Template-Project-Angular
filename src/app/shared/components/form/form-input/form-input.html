@@ -1,0 +1,21 @@
+<div class="flex flex-col gap-2 mb-5 w-full" [formGroup]="formGroup()">
+
+  <label [for]="controlName()" class="font-semibold text-slate-600 text-[0.9rem] block">
+    {{ label() }}
+    @if (required() && !readonly()) { <span class="text-red-600">*</span> }
+  </label>
+
+  <input
+    [type]="type()"
+    [id]="controlName()"
+    [formControlName]="controlName()"
+    [placeholder]="placeholder()"
+    [readonly]="readonly()"
+    [attr.aria-readonly]="readonly() ? 'true' : null"
+    [class]="inputClasses()" />
+
+  @if (isInvalid()) {
+    <small class="text-red-500 text-[0.8rem] font-medium mt-1 animate-[fadeIn_0.12s_ease-out]">{{ errorMessage() }}</small>
+  }
+
+</div>

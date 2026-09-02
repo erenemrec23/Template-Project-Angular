@@ -1,0 +1,29 @@
+<div class="max-w-4xl mx-auto my-8 font-sans p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+  <h2 class="text-xl font-bold text-gray-900 mb-6">{{ t('PageTitle.User-Permisson-Form') }}</h2>
+
+  <form app-form-wrapper
+        [formGroup]="permissionForm"
+        [cancelUrl]="'/users'"
+        [isSubmitting]="isSubmitting()"
+        [submitButtonText]="t('Button.Save')"
+        (ngSubmit)="onSubmit()"
+        class="space-y-6">
+
+    <app-select
+      [items]="usersList()"
+      labelKey="fullName"
+      valueKey="id"
+      labelTitle="Label.SelectUser"
+      placeholder="Label.ChooseUserPlaceholder"
+      [value]="permissionForm.get('userId')?.value"
+      (valueChange)="permissionForm.get('userId')?.setValue($event)" />
+
+    <hr class="border-gray-200/80 my-4" />
+    <app-permission-matrix
+  [targetId]="permissionForm.get('userId')?.value"
+  [fetchPermissions]="userPermissionFetchFn"
+  (permissionsChange)="onPermissionsCalculated($event)"
+  (groupPermissionsChange)="onGroupPermissionsCalculated($event)" />
+
+  </form>
+</div>

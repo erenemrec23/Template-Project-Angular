@@ -1,0 +1,13 @@
+<div class="w-full max-w-4xl mx-auto p-4 md:p-6 transition-all duration-150">
+  <app-form-header></app-form-header>
+
+  <!-- @if (roleId()) guard KALDIRILDI: id yoksa çoklu (rol seçimi) modu açılır -->
+  <app-permission-wizard
+    [targetId]="roleId()"
+    [cancelUrl]="'/roles'"
+    [fetchPermissions]="fetchFn"
+    [fetchTargets]="fetchTargetsFn"
+    [targetLabelFn]="targetLabelFn"
+    [savePermissions]="saveFn"
+    (saved)="onSaved()" />
+</div>
